@@ -30,6 +30,8 @@ jobs:
             clang-tidy \
             cmake \
             g++ \
+            libc++-dev \
+            libc++abi-dev \
             ninja-build
 
       - name: Configure Debug
