@@ -31,8 +31,8 @@ int main(int argc, char** argv) {
                 static_cast<std::uint8_t>(input.v * 255.0F), 128U};
           });
 
-  std::vector<usoralis::example::Rgb8> pixels(
-      static_cast<std::size_t>(Width) * Height);
+  const std::size_t PixelCount = static_cast<std::size_t>(Width) * Height;
+  std::vector<usoralis::example::Rgb8> pixels(PixelCount);
   for (std::uint32_t y = 0; y < Height; ++y) {
     for (std::uint32_t x = 0; x < Width; ++x) {
       const FragmentInput Input{
