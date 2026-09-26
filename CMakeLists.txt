@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(uSoralis2 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -10,7 +10,9 @@ option(USORALIS_ENABLE_CLANG_TIDY "Enable clang-tidy during compilation" OFF)
 
 if(USORALIS_ENABLE_CLANG_TIDY)
     find_program(CLANG_TIDY_EXECUTABLE NAMES clang-tidy REQUIRED)
-    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXECUTABLE}")
+    set(CMAKE_CXX_CLANG_TIDY
+        "${CLANG_TIDY_EXECUTABLE};--extra-arg=-stdlib=libc++"
+    )
 endif()
 
 add_library(usoralis INTERFACE)

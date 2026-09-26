@@ -8,7 +8,7 @@
 
 ```bash
 sudo apt update
-sudo apt install build-essential cmake ninja-build clang-format clang-tidy
+sudo apt install build-essential cmake ninja-build clang-format clang-tidy libc++-dev libc++abi-dev
 ```
 
 Debugビルドとテストを実行する。
@@ -40,7 +40,7 @@ cmake --build --preset debug --target format
 cmake --build --preset debug --target format-check
 ```
 
-`clang-tidy`を有効にしてビルドする。
+`clang-tidy`を有効にしてビルドする。C++23の標準ライブラリ解析ではlibc++を使用する。
 
 ```bash
 cmake --preset lint

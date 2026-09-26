@@ -10,7 +10,7 @@
 
 ## C++
 
-- C++17を使用する。
+- C++23を使用する。
 - 書式は`.clang-format`、静的解析と命名は`.clang-tidy`を正とする。
 - 公開ヘッダは`.hpp`とし、型や主要機能に対応するファイル名は`CamelCase`とする。
 - namespaceは`lower_case`、型と関数は`CamelCase`、変数と引数は`camelBack`とする。

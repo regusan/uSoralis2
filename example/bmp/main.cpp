@@ -44,8 +44,12 @@ int main(int argc, char** argv) {
     }
   }
 
-  if (!usoralis::example::WriteBmp24(outputPath, pixels, Width, Height)) {
-    std::cerr << "BMPの書き出しに失敗しました: " << outputPath << '\n';
+  const auto WriteResult =
+      usoralis::example::WriteBmp24(outputPath, pixels, Width, Height);
+  if (!WriteResult) {
+    std::cerr << "BMPの書き出しに失敗しました: "
+              << usoralis::example::BmpErrorMessage(WriteResult.error()) << " ("
+              << outputPath << ")\n";
     return 1;
   }
 

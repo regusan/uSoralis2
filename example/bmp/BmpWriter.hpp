@@ -2,8 +2,10 @@
 
 #include <array>
 #include <cstdint>
+#include <expected>
 #include <fstream>
 #include <limits>
+#include <string_view>
 #include <vector>
 
 namespace usoralis::example {
@@ -13,6 +15,33 @@ struct Rgb8 {
   std::uint8_t green;
   std::uint8_t blue;
 };
+
+enum class BmpError : std::uint8_t {
+  InvalidArgument,
+  DimensionOverflow,
+  PixelCountMismatch,
+  FileTooLarge,
+  FileOpenFailed,
+  WriteFailed,
+};
+
+constexpr std::string_view BmpErrorMessage(BmpError error) {
+  switch (error) {
+    case BmpError::InvalidArgument:
+      return "引数が不正です";
+    case BmpError::DimensionOverflow:
+      return "画像サイズがBMPの上限を超えています";
+    case BmpError::PixelCountMismatch:
+      return "ピクセル数と画像サイズが一致しません";
+    case BmpError::FileTooLarge:
+      return "BMPファイルサイズが上限を超えています";
+    case BmpError::FileOpenFailed:
+      return "出力ファイルを開けませんでした";
+    case BmpError::WriteFailed:
+      return "BMPデータの書き込みに失敗しました";
+  }
+  return "不明なエラーです";
+}
 
 namespace detail {
 
@@ -40,26 +69,28 @@ inline bool WriteU32(std::ofstream& output, std::uint32_t value) {
 
 }  // namespace detail
 
-inline bool WriteBmp24(const char* path, const std::vector<Rgb8>& pixels,
-                       std::uint32_t width, std::uint32_t height) {
+inline std::expected<void, BmpError> WriteBmp24(const char* path,
+                                                const std::vector<Rgb8>& pixels,
+                                                std::uint32_t width,
+                                                std::uint32_t height) {
   constexpr std::uint32_t FileHeaderSize = 14U;
   constexpr std::uint32_t DibHeaderSize = 40U;
   constexpr std::uint32_t PixelOffset = FileHeaderSize + DibHeaderSize;
 
   if (path == nullptr || width == 0U || height == 0U) {
-    return false;
+    return std::unexpected(BmpError::InvalidArgument);
   }
   if (width > static_cast<std::uint32_t>(
                   std::numeric_limits<std::int32_t>::max()) ||
       height > static_cast<std::uint32_t>(
                    std::numeric_limits<std::int32_t>::max())) {
-    return false;
+    return std::unexpected(BmpError::DimensionOverflow);
   }
 
   const auto ExpectedPixels =
       static_cast<std::uint64_t>(width) * static_cast<std::uint64_t>(height);
   if (ExpectedPixels != pixels.size()) {
-    return false;
+    return std::unexpected(BmpError::PixelCountMismatch);
   }
 
   const std::uint64_t RowBytes = static_cast<std::uint64_t>(width) * 3U;
@@ -67,12 +98,12 @@ inline bool WriteBmp24(const char* path, const std::vector<Rgb8>& pixels,
   const std::uint64_t PixelBytes = RowStride * height;
   const std::uint64_t FileSize = PixelOffset + PixelBytes;
   if (FileSize > std::numeric_limits<std::uint32_t>::max()) {
-    return false;
+    return std::unexpected(BmpError::FileTooLarge);
   }
 
   std::ofstream output(path, std::ios::binary);
   if (!output) {
-    return false;
+    return std::unexpected(BmpError::FileOpenFailed);
   }
 
   output.put('B');
@@ -87,7 +118,7 @@ inline bool WriteBmp24(const char* path, const std::vector<Rgb8>& pixels,
       !detail::WriteU32(output, static_cast<std::uint32_t>(PixelBytes)) ||
       !detail::WriteU32(output, 0U) || !detail::WriteU32(output, 0U) ||
       !detail::WriteU32(output, 0U) || !detail::WriteU32(output, 0U)) {
-    return false;
+    return std::unexpected(BmpError::WriteFailed);
   }
 
   for (std::uint32_t row = 0; row < height; ++row) {
@@ -95,9 +126,9 @@ inline bool WriteBmp24(const char* path, const std::vector<Rgb8>& pixels,
     for (std::uint32_t x = 0; x < width; ++x) {
       const std::size_t PixelIndex =
           static_cast<std::size_t>(SourceY) * width + x;
-      const auto& Pixel = pixels[PixelIndex];
-      const std::array<unsigned char, 3> Bytes{Pixel.blue, Pixel.green,
-                                               Pixel.red};
+      const auto& pixel = pixels[PixelIndex];
+      const std::array<unsigned char, 3> Bytes{pixel.blue, pixel.green,
+                                               pixel.red};
       output.write(reinterpret_cast<const char*>(Bytes.data()),
                    static_cast<std::streamsize>(Bytes.size()));
     }
@@ -106,7 +137,11 @@ inline bool WriteBmp24(const char* path, const std::vector<Rgb8>& pixels,
     }
   }
 
-  return static_cast<bool>(output);
+  if (!output) {
+    return std::unexpected(BmpError::WriteFailed);
+  }
+
+  return {};
 }
 
 }  // namespace usoralis::example
