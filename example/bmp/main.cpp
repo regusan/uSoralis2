@@ -2,6 +2,8 @@
 
 #include <usoralis/Shader.hpp>
 
+#include <vec2.hpp>
+
 #include <cstdint>
 #include <iostream>
 #include <vector>
@@ -11,8 +13,7 @@ namespace {
 struct Uniform {};
 
 struct FragmentInput {
-  float u;
-  float v;
+  trm3d::vec2<float> uv;
 };
 
 }  // namespace
@@ -27,8 +28,8 @@ int main(int argc, char** argv) {
       usoralis::MakeShader<Uniform, FragmentInput, usoralis::example::Rgb8>(
           [](const FragmentInput& input, const Uniform&) {
             return usoralis::example::Rgb8{
-                static_cast<std::uint8_t>(input.u * 255.0F),
-                static_cast<std::uint8_t>(input.v * 255.0F), 128U};
+                static_cast<std::uint8_t>(input.uv.u * 255.0F),
+                static_cast<std::uint8_t>(input.uv.v * 255.0F), 128U};
           });
 
   const std::size_t PixelCount = static_cast<std::size_t>(Width) * Height;
@@ -36,8 +37,10 @@ int main(int argc, char** argv) {
   for (std::uint32_t y = 0; y < Height; ++y) {
     for (std::uint32_t x = 0; x < Width; ++x) {
       const FragmentInput Input{
-          static_cast<float>(x) / static_cast<float>(Width - 1U),
-          static_cast<float>(y) / static_cast<float>(Height - 1U),
+          trm3d::vec2<float>{
+              static_cast<float>(x) / static_cast<float>(Width - 1U),
+              static_cast<float>(y) / static_cast<float>(Height - 1U),
+          },
       };
       pixels[static_cast<std::size_t>(y) * Width + x] =
           ShaderProgram(Input, UniformData);
