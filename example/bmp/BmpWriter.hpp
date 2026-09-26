@@ -16,7 +16,7 @@ struct Rgb8 {
   std::uint8_t blue;
 };
 
-enum class BmpError {
+enum class BmpError : std::uint8_t {
   InvalidArgument,
   DimensionOverflow,
   PixelCountMismatch,
@@ -126,9 +126,9 @@ inline std::expected<void, BmpError> WriteBmp24(const char* path,
     for (std::uint32_t x = 0; x < width; ++x) {
       const std::size_t PixelIndex =
           static_cast<std::size_t>(SourceY) * width + x;
-      const auto& Pixel = pixels[PixelIndex];
-      const std::array<unsigned char, 3> Bytes{Pixel.blue, Pixel.green,
-                                               Pixel.red};
+      const auto& pixel = pixels[PixelIndex];
+      const std::array<unsigned char, 3> Bytes{pixel.blue, pixel.green,
+                                               pixel.red};
       output.write(reinterpret_cast<const char*>(Bytes.data()),
                    static_cast<std::streamsize>(Bytes.size()));
     }
