@@ -22,8 +22,8 @@ int main(int argc, char** argv) {
   constexpr std::uint32_t Height = 256U;
 
   const char* outputPath = argc >= 2 ? argv[1] : "output.bmp";
-  const Uniform uniform{};
-  const auto shader =
+  const Uniform UniformData{};
+  const auto ShaderProgram =
       usoralis::MakeShader<Uniform, FragmentInput, usoralis::example::Rgb8>(
           [](const FragmentInput& input, const Uniform&) {
             return usoralis::example::Rgb8{
@@ -35,11 +35,12 @@ int main(int argc, char** argv) {
       static_cast<std::size_t>(Width) * Height);
   for (std::uint32_t y = 0; y < Height; ++y) {
     for (std::uint32_t x = 0; x < Width; ++x) {
-      const FragmentInput input{
+      const FragmentInput Input{
           static_cast<float>(x) / static_cast<float>(Width - 1U),
           static_cast<float>(y) / static_cast<float>(Height - 1U),
       };
-      pixels[static_cast<std::size_t>(y) * Width + x] = shader(input, uniform);
+      pixels[static_cast<std::size_t>(y) * Width + x] =
+          ShaderProgram(Input, UniformData);
     }
   }
 
