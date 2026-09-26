@@ -57,6 +57,7 @@ target_sources(bench_cmsis PRIVATE
 )
 target_include_directories(bench_cmsis PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/deps/CMSIS-DSP/Include
+  ${CMAKE_CURRENT_SOURCE_DIR}/deps/CMSIS-DSP/PrivateInclude
   ${CMAKE_CURRENT_SOURCE_DIR}/deps/CMSIS_6/CMSIS/Core/Include
 )
 target_compile_definitions(bench_cmsis PRIVATE
