@@ -13,10 +13,13 @@ if(USORALIS_ENABLE_CLANG_TIDY)
     set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXECUTABLE}")
 endif()
 
+add_subdirectory(third_party/TinyReguMath3D EXCLUDE_FROM_ALL)
+
 add_library(usoralis INTERFACE)
 target_include_directories(usoralis INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
+target_link_libraries(usoralis INTERFACE TinyReguMath3D)
 
 file(GLOB_RECURSE USORALIS_FORMAT_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
