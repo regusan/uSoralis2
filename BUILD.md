@@ -8,7 +8,7 @@ Ubuntu 24.04またはWSL2上のUbuntu 24.04を基準環境とする。
 
 - C++23
 - GCC / libstdc++で通常ビルド
-- Clang 22の`clang-format`と`clang-tidy`を使用
+- Clang 22の`clangd`、`clang-format`、`clang-tidy`を使用
 - CMake + Ninja
 
 ## 初回セットアップ
@@ -33,7 +33,7 @@ cd uSoralis2
 bash scripts/setup-ubuntu.sh
 ```
 
-このスクリプトはUbuntu 24.04を確認したうえで、GCC、CMake、Ninja、Clang 22の`clang-format` / `clang-tidy`を導入する。LLVM公式APTリポジトリの設定も自動で行う。同じスクリプトをGitHub Actionsでも使用する。
+このスクリプトはUbuntu 24.04を確認したうえで、GCC、CMake、Ninja、Clang 22の`clangd` / `clang-format` / `clang-tidy`を導入する。LLVM公式APTリポジトリの設定も自動で行う。同じスクリプトをGitHub Actionsでも使用する。
 
 環境だけを再確認したい場合は次を実行する。
 
@@ -43,7 +43,17 @@ bash scripts/check-env.sh
 
 `check-env.sh`は必要なツールとバージョンを表示し、C++23の`std::expected`が実際にコンパイルできることも確認する。
 
-VS Codeを使用する場合は、このディレクトリをWSL側から開く。推奨拡張機能は`.vscode/extensions.json`に定義している。
+## VS Code / clangd
+
+VS Codeを使用する場合は、このディレクトリをWSL側から開く。推奨拡張機能は`.vscode/extensions.json`に定義しており、C++の補完と診断にはclangdを使用する。
+
+リポジトリ直下の`.clangd`で`build/debug/compile_commands.json`を参照するため、最初にDebug構成を生成する。
+
+```bash
+cmake --preset debug
+```
+
+VS Code設定では`/usr/bin/clangd-22`を明示している。Microsoft C/C++拡張もインストールしている場合は、IntelliSenseを無効にしてclangdとの二重診断を避ける。
 
 ## Debugビルドとテスト
 
