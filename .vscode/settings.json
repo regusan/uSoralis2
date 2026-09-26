@@ -6,6 +6,9 @@
   "C_Cpp.clang_format_style": "file",
   "C_Cpp.codeAnalysis.clangTidy.enabled": true,
   "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
+  "C_Cpp.codeAnalysis.clangTidy.args": [
+    "--extra-arg=-stdlib=libc++"
+  ],
   "editor.formatOnSave": true,
   "[cpp]": {
     "editor.defaultFormatter": "ms-vscode.cpptools"
