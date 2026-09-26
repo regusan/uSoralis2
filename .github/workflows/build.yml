@@ -26,13 +26,21 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y \
-            clang-format \
-            clang-tidy \
+            ca-certificates \
             cmake \
             g++ \
-            libc++-dev \
-            libc++abi-dev \
-            ninja-build
+            ninja-build \
+            wget
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key \
+            | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc >/dev/null
+          echo "deb https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main" \
+            | sudo tee /etc/apt/sources.list.d/llvm22.list
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            clang-format-22 \
+            clang-tidy-22
+          clang-format-22 --version
+          clang-tidy-22 --version
 
       - name: Configure Debug
         run: cmake --preset debug
