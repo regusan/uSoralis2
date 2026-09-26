@@ -23,7 +23,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y \
-            cmake ninja-build gcc-arm-none-eabi libnewlib-arm-none-eabi
+            cmake ninja-build gcc-arm-none-eabi libnewlib-arm-none-eabi \
+            libstdc++-arm-none-eabi-newlib
           arm-none-eabi-gcc --version | head -n 1
 
       - name: Fetch Pico SDK and libraries
