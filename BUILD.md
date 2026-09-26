@@ -10,7 +10,7 @@ Ubuntu 24.04またはWSL2上のUbuntu 24.04を基準環境とする。
 - GCC / libstdc++で通常ビルド
 - Clang 22の`clangd`、`clang-format`、`clang-tidy`を使用
 - CMake + Ninja
-- TinyReguMath3DをGit submoduleとして使用
+- GLM 1.0.3をGit submoduleとして使用
 
 ## 初回セットアップ
 
@@ -34,7 +34,7 @@ cd uSoralis2
 bash scripts/setup-ubuntu.sh
 ```
 
-このスクリプトはUbuntu 24.04を確認したうえで、GCC、CMake、Ninja、Clang 22の`clangd` / `clang-format` / `clang-tidy`を導入する。LLVM公式APTリポジトリの設定に加えて、`third_party/TinyReguMath3D` submoduleの初期化も自動で行う。同じスクリプトをGitHub Actionsでも使用する。
+このスクリプトはUbuntu 24.04を確認したうえで、GCC、CMake、Ninja、Clang 22の`clangd` / `clang-format` / `clang-tidy`を導入する。LLVM公式APTリポジトリの設定に加えて、`third_party/glm` submoduleの初期化も自動で行う。同じスクリプトをGitHub Actionsでも使用する。
 
 環境だけを再確認したい場合は次を実行する。
 
