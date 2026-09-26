@@ -1,0 +1,3 @@
+[submodule "third_party/TinyReguMath3D"]
+	path = third_party/TinyReguMath3D
+	url = https://github.com/regusan/TinyReguMath3D.git
