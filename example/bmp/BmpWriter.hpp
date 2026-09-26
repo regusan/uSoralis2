@@ -93,8 +93,9 @@ inline bool WriteBmp24(const char* path, const std::vector<Rgb8>& pixels,
   for (std::uint32_t row = 0; row < height; ++row) {
     const std::uint32_t SourceY = height - row - 1U;
     for (std::uint32_t x = 0; x < width; ++x) {
-      const auto& Pixel =
-          pixels[static_cast<std::size_t>(SourceY) * width + x];
+      const std::size_t PixelIndex =
+          static_cast<std::size_t>(SourceY) * width + x;
+      const auto& Pixel = pixels[PixelIndex];
       const std::array<unsigned char, 3> Bytes{Pixel.blue, Pixel.green,
                                                Pixel.red};
       output.write(reinterpret_cast<const char*>(Bytes.data()),
