@@ -59,24 +59,29 @@ jobs:
           PICO_SDK_PATH: ${{ runner.temp }}/pico-sdk
         shell: bash
         run: |
-          set -euo pipefail
-          printf 'name,text,data,bss,dec,build_ms\n' | tee results.csv
+          set -uo pipefail
+          printf 'name,text,data,bss,dec,build_ms,status\n' | tee results.csv
 
           record_size() {
             local target="$1"
             local elapsed="$2"
             arm-none-eabi-size "build-embedded/${target}.elf" | awk -v name="$target" -v ms="$elapsed" \
-              'NR == 2 {printf "%s,%s,%s,%s,%s,%s\n", name, $1, $2, $3, $4, ms}' | tee -a results.csv
+              'NR == 2 {printf "%s,%s,%s,%s,%s,%s,success\n", name, $1, $2, $3, $4, ms}' | tee -a results.csv
           }
 
           record_size bench_baseline 0
 
           for target in bench_tinyregu bench_glm bench_bla bench_eigen bench_cmsis; do
             start_ns="$(date +%s%N)"
-            cmake --build build-embedded --target "$target" --parallel
-            end_ns="$(date +%s%N)"
-            elapsed_ms="$(( (end_ns - start_ns) / 1000000 ))"
-            record_size "$target" "$elapsed_ms"
+            if cmake --build build-embedded --target "$target" --parallel; then
+              end_ns="$(date +%s%N)"
+              elapsed_ms="$(( (end_ns - start_ns) / 1000000 ))"
+              record_size "$target" "$elapsed_ms"
+            else
+              end_ns="$(date +%s%N)"
+              elapsed_ms="$(( (end_ns - start_ns) / 1000000 ))"
+              printf '%s,,,,,%s,failed\n' "$target" "$elapsed_ms" | tee -a results.csv
+            fi
           done
 
           echo '--- RESULT CSV ---'

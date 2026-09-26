@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cstddef>
 
 class Print {
@@ -11,3 +12,5 @@ class Print {
     return 0;
   }
 };
+
+using std::max;

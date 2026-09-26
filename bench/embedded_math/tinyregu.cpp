@@ -1,4 +1,3 @@
-#define TRM3D_NO_IOSTREAM
 #include <TinyReguMath3D.hpp>
 
 volatile float gInput = 1.25F;
