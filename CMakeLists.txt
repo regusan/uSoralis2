@@ -10,7 +10,9 @@ option(USORALIS_ENABLE_CLANG_TIDY "Enable clang-tidy during compilation" OFF)
 
 if(USORALIS_ENABLE_CLANG_TIDY)
     find_program(CLANG_TIDY_EXECUTABLE NAMES clang-tidy REQUIRED)
-    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXECUTABLE}")
+    set(CMAKE_CXX_CLANG_TIDY
+        "${CLANG_TIDY_EXECUTABLE};--extra-arg=-stdlib=libc++"
+    )
 endif()
 
 add_library(usoralis INTERFACE)
