@@ -17,22 +17,24 @@ struct Rgb8 {
 namespace detail {
 
 inline bool WriteU16(std::ofstream& output, std::uint16_t value) {
-  const std::array<unsigned char, 2> bytes{
+  const std::array<unsigned char, 2> Bytes{
       static_cast<unsigned char>(value & 0xffU),
       static_cast<unsigned char>((value >> 8U) & 0xffU),
   };
-  output.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+  output.write(reinterpret_cast<const char*>(Bytes.data()),
+               static_cast<std::streamsize>(Bytes.size()));
   return static_cast<bool>(output);
 }
 
 inline bool WriteU32(std::ofstream& output, std::uint32_t value) {
-  const std::array<unsigned char, 4> bytes{
+  const std::array<unsigned char, 4> Bytes{
       static_cast<unsigned char>(value & 0xffU),
       static_cast<unsigned char>((value >> 8U) & 0xffU),
       static_cast<unsigned char>((value >> 16U) & 0xffU),
       static_cast<unsigned char>((value >> 24U) & 0xffU),
   };
-  output.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+  output.write(reinterpret_cast<const char*>(Bytes.data()),
+               static_cast<std::streamsize>(Bytes.size()));
   return static_cast<bool>(output);
 }
 
@@ -91,11 +93,12 @@ inline bool WriteBmp24(const char* path, const std::vector<Rgb8>& pixels,
   for (std::uint32_t row = 0; row < height; ++row) {
     const std::uint32_t SourceY = height - row - 1U;
     for (std::uint32_t x = 0; x < width; ++x) {
-      const auto& pixel =
+      const auto& Pixel =
           pixels[static_cast<std::size_t>(SourceY) * width + x];
-      const std::array<unsigned char, 3> bytes{pixel.blue, pixel.green,
-                                                pixel.red};
-      output.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+      const std::array<unsigned char, 3> Bytes{Pixel.blue, Pixel.green,
+                                               Pixel.red};
+      output.write(reinterpret_cast<const char*>(Bytes.data()),
+                   static_cast<std::streamsize>(Bytes.size()));
     }
     for (std::uint64_t padding = RowBytes; padding < RowStride; ++padding) {
       output.put('\0');
