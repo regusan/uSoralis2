@@ -1,0 +1,84 @@
+name: Embedded Math Bench
+
+on:
+  push:
+    branches:
+      - bench/embedded-math-libs
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bench:
+    name: RP2350 size benchmark
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install ARM toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            cmake ninja-build gcc-arm-none-eabi libnewlib-arm-none-eabi
+          arm-none-eabi-gcc --version | head -n 1
+
+      - name: Fetch Pico SDK and libraries
+        run: |
+          git clone --depth 1 --branch 2.2.0 https://github.com/raspberrypi/pico-sdk.git "$RUNNER_TEMP/pico-sdk"
+          git -C "$RUNNER_TEMP/pico-sdk" submodule update --init --recursive
+
+          mkdir -p bench/embedded_math/deps
+          git clone --depth 1 --branch 1.0.3 https://github.com/g-truc/glm.git bench/embedded_math/deps/glm
+          git clone https://github.com/tomstewart89/BasicLinearAlgebra.git bench/embedded_math/deps/BasicLinearAlgebra
+          git -C bench/embedded_math/deps/BasicLinearAlgebra checkout a87a7fe310f5765ad3ca7d1924ac7e39e122d526
+          git clone --depth 1 --branch v0.3.2 https://github.com/hideakitai/ArduinoEigen.git bench/embedded_math/deps/ArduinoEigen
+          git clone --depth 1 --branch v1.18.0 https://github.com/ARM-software/CMSIS-DSP.git bench/embedded_math/deps/CMSIS-DSP
+          git clone --depth 1 --branch v6.3.0 https://github.com/ARM-software/CMSIS_6.git bench/embedded_math/deps/CMSIS_6
+
+      - name: Configure Pico 2 ARM build
+        env:
+          PICO_SDK_PATH: ${{ runner.temp }}/pico-sdk
+        run: |
+          cmake -S bench/embedded_math -B build-embedded -G Ninja \
+            -DPICO_BOARD=pico2 \
+            -DPICO_PLATFORM=rp2350-arm-s \
+            -DCMAKE_BUILD_TYPE=MinSizeRel
+
+      - name: Build baseline and warm SDK
+        run: cmake --build build-embedded --target bench_baseline --parallel
+
+      - name: Build and measure libraries
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'name,text,data,bss,dec,build_ms\n' | tee results.csv
+
+          record_size() {
+            local target="$1"
+            local elapsed="$2"
+            arm-none-eabi-size "build-embedded/${target}.elf" | awk -v name="$target" -v ms="$elapsed" \
+              'NR == 2 {printf "%s,%s,%s,%s,%s,%s\n", name, $1, $2, $3, $4, ms}' | tee -a results.csv
+          }
+
+          record_size bench_baseline 0
+
+          for target in bench_tinyregu bench_glm bench_bla bench_eigen bench_cmsis; do
+            start_ns="$(date +%s%N)"
+            cmake --build build-embedded --target "$target" --parallel
+            end_ns="$(date +%s%N)"
+            elapsed_ms="$(( (end_ns - start_ns) / 1000000 ))"
+            record_size "$target" "$elapsed_ms"
+          done
+
+          echo '--- RESULT CSV ---'
+          cat results.csv
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: embedded-math-bench
+          path: results.csv
