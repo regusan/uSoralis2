@@ -11,7 +11,6 @@ Checks:
   - '-portability-avoid-pragma-once'
 WarningsAsErrors: 'readability-identifier-naming'
 HeaderFilterRegex: '(^|.*/)(include|example|tests)/.*'
-ExcludeHeaderFilterRegex: '(^|.*/)(external|build[^/]*)/.*'
 SystemHeaders: false
 FormatStyle: file
 CheckOptions:
