@@ -69,9 +69,10 @@ inline bool WriteU32(std::ofstream& output, std::uint32_t value) {
 
 }  // namespace detail
 
-inline std::expected<void, BmpError> WriteBmp24(
-    const char* path, const std::vector<Rgb8>& pixels, std::uint32_t width,
-    std::uint32_t height) {
+inline std::expected<void, BmpError> WriteBmp24(const char* path,
+                                                const std::vector<Rgb8>& pixels,
+                                                std::uint32_t width,
+                                                std::uint32_t height) {
   constexpr std::uint32_t FileHeaderSize = 14U;
   constexpr std::uint32_t DibHeaderSize = 40U;
   constexpr std::uint32_t PixelOffset = FileHeaderSize + DibHeaderSize;
