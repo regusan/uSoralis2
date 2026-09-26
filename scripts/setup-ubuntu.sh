@@ -41,6 +41,7 @@ fi
 
 sudo apt-get update
 sudo apt-get install --no-install-recommends -y \
+  "clangd-${LLVM_VERSION}" \
   "clang-format-${LLVM_VERSION}" \
   "clang-tidy-${LLVM_VERSION}"
 
