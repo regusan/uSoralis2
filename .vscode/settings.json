@@ -1,15 +1,9 @@
 {
   "cmake.configurePreset": "debug",
   "cmake.buildPreset": "debug",
-  "C_Cpp.default.compileCommands": "${workspaceFolder}/build/debug/compile_commands.json",
-  "C_Cpp.formatting": "clangFormat",
-  "C_Cpp.clang_format_style": "file",
-  "C_Cpp.clang_format_path": "/usr/bin/clang-format-22",
-  "C_Cpp.codeAnalysis.clangTidy.enabled": true,
-  "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
-  "C_Cpp.codeAnalysis.clangTidy.path": "/usr/bin/clang-tidy-22",
+  "clangd.path": "/usr/bin/clangd-22",
   "editor.formatOnSave": true,
   "[cpp]": {
-    "editor.defaultFormatter": "ms-vscode.cpptools"
+    "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
   }
 }
