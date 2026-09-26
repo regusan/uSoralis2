@@ -11,43 +11,37 @@ Ubuntu 24.04またはWSL2上のUbuntu 24.04を基準環境とする。
 - Clang 22の`clang-format`と`clang-tidy`を使用
 - CMake + Ninja
 
-## Ubuntu / WSLの環境構築
+## 初回セットアップ
 
-基本ツールを導入する。
+Gitが未導入なら先にインストールする。
 
 ```bash
 sudo apt update
-sudo apt install -y build-essential cmake ninja-build ca-certificates wget
+sudo apt install -y git
 ```
 
-Clang 22はLLVM公式APTリポジトリから導入する。
-
-```bash
-wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key \
-  | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc >/dev/null
-
-echo "deb https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main" \
-  | sudo tee /etc/apt/sources.list.d/llvm22.list
-
-sudo apt update
-sudo apt install -y clang-format-22 clang-tidy-22
-```
-
-導入されたバージョンを確認する。
-
-```bash
-clang-format-22 --version
-clang-tidy-22 --version
-```
-
-CMakeは`clang-format-22`と`clang-tidy-22`を優先して検出する。Clang 18向けに使用していたlibc++は不要。
-
-## リポジトリ取得
+リポジトリを取得する。
 
 ```bash
 git clone https://github.com/regusan/uSoralis2.git
 cd uSoralis2
 ```
+
+開発環境は共通セットアップスクリプトで構築する。
+
+```bash
+bash scripts/setup-ubuntu.sh
+```
+
+このスクリプトはUbuntu 24.04を確認したうえで、GCC、CMake、Ninja、Clang 22の`clang-format` / `clang-tidy`を導入する。LLVM公式APTリポジトリの設定も自動で行う。同じスクリプトをGitHub Actionsでも使用する。
+
+環境だけを再確認したい場合は次を実行する。
+
+```bash
+bash scripts/check-env.sh
+```
+
+`check-env.sh`は必要なツールとバージョンを表示し、C++23の`std::expected`が実際にコンパイルできることも確認する。
 
 VS Codeを使用する場合は、このディレクトリをWSL側から開く。推奨拡張機能は`.vscode/extensions.json`に定義している。
 
