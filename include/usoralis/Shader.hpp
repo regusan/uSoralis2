@@ -8,7 +8,8 @@ namespace usoralis {
 template <typename Uniform, typename In, typename Out, typename Function>
 class Shader {
  public:
-  explicit constexpr Shader(Function function) : function_(std::move(function)) {}
+  explicit constexpr Shader(Function function)
+      : function_(std::move(function)) {}
 
   constexpr Out operator()(const In& input, const Uniform& uniform) const {
     return function_(input, uniform);
