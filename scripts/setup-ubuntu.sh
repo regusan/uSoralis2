@@ -7,6 +7,7 @@ readonly LLVM_REPOSITORY="deb https://apt.llvm.org/noble/ llvm-toolchain-noble-$
 readonly LLVM_KEY_PATH="/etc/apt/trusted.gpg.d/apt.llvm.org.asc"
 readonly LLVM_LIST_PATH="/etc/apt/sources.list.d/llvm${LLVM_VERSION}.list"
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly REPOSITORY_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 if [[ ! -r /etc/os-release ]]; then
   echo "エラー: /etc/os-releaseを読み込めません。Ubuntu 24.04で実行してください。" >&2
@@ -44,5 +45,7 @@ sudo apt-get install --no-install-recommends -y \
   "clangd-${LLVM_VERSION}" \
   "clang-format-${LLVM_VERSION}" \
   "clang-tidy-${LLVM_VERSION}"
+
+git -C "${REPOSITORY_DIR}" submodule update --init --recursive
 
 bash "${SCRIPT_DIR}/check-env.sh"
