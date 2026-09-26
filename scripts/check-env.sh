@@ -5,6 +5,7 @@ readonly REQUIRED_COMMANDS=(
   c++
   cmake
   ninja
+  clangd-22
   clang-format-22
   clang-tidy-22
 )
@@ -24,6 +25,9 @@ cmake --version | head -n 1
 
 echo "Ninja:"
 ninja --version
+
+echo "clangd:"
+clangd-22 --version | head -n 1
 
 echo "clang-format:"
 clang-format-22 --version
