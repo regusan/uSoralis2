@@ -9,10 +9,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(USORALIS_ENABLE_CLANG_TIDY "Enable clang-tidy during compilation" OFF)
 
 if(USORALIS_ENABLE_CLANG_TIDY)
-    find_program(CLANG_TIDY_EXECUTABLE NAMES clang-tidy REQUIRED)
-    set(CMAKE_CXX_CLANG_TIDY
-        "${CLANG_TIDY_EXECUTABLE};--extra-arg=-stdlib=libc++"
-    )
+    find_program(CLANG_TIDY_EXECUTABLE NAMES clang-tidy-22 clang-tidy REQUIRED)
+    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXECUTABLE}")
 endif()
 
 add_library(usoralis INTERFACE)
@@ -26,7 +24,7 @@ file(GLOB_RECURSE USORALIS_FORMAT_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/example/*.cpp"
 )
 
-find_program(CLANG_FORMAT_EXECUTABLE NAMES clang-format)
+find_program(CLANG_FORMAT_EXECUTABLE NAMES clang-format-22 clang-format)
 if(CLANG_FORMAT_EXECUTABLE)
     add_custom_target(format
         COMMAND ${CLANG_FORMAT_EXECUTABLE} -i ${USORALIS_FORMAT_FILES}
