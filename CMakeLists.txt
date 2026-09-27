@@ -13,13 +13,16 @@ if(USORALIS_ENABLE_CLANG_TIDY)
     set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXECUTABLE}")
 endif()
 
-add_subdirectory(third_party/TinyReguMath3D EXCLUDE_FROM_ALL)
+set(GLM_BUILD_LIBRARY OFF CACHE BOOL "" FORCE)
+set(GLM_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLM_BUILD_INSTALL OFF CACHE BOOL "" FORCE)
+add_subdirectory(third_party/glm EXCLUDE_FROM_ALL)
 
 add_library(usoralis INTERFACE)
 target_include_directories(usoralis INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
-target_link_libraries(usoralis INTERFACE TinyReguMath3D)
+target_link_libraries(usoralis INTERFACE glm::glm-header-only)
 
 file(GLOB_RECURSE USORALIS_FORMAT_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
